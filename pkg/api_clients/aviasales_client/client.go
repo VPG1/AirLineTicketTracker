@@ -1,4 +1,4 @@
-package iata_code_definition_api
+package aviasales_client
 
 import (
 	"encoding/json"
@@ -9,26 +9,30 @@ import (
 )
 
 type Client struct {
+	token  string
 	host   string
 	client http.Client
 }
 
-func New(host string) *Client {
+func New(host string, token string) *Client {
 	return &Client{
+		token:  token,
 		host:   host,
 		client: http.Client{},
 	}
 }
 
-func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
+func (c *Client) GetFlightInfo(origin string, destination string) (*Response, error) {
 	u := url.URL{
 		Scheme: "https",
 		Host:   c.host,
-		Path:   "widgets_suggest_params",
+		Path:   "v1/prices/cheap",
 	}
 
 	q := url.Values{}
-	q.Add("q", searchPhrase)
+	q.Add("origin", origin)
+	q.Add("destination", destination)
+	q.Add("token", c.token)
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -49,9 +53,9 @@ func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
 		return nil, fmt.Errorf("error when unmarshal: %s", err)
 	}
 
-	if responseBody.Destination.IATA == "" || responseBody.Origin.IATA == "" {
-		return nil, IncorrectResponse
+	if responseBody.Success == false {
+		return nil, FlightNotFound
 	}
-
+	
 	return responseBody, nil
 }
