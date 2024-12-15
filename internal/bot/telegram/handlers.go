@@ -54,6 +54,7 @@ func (b *Bot) handleHelpCommand(message *tgbotapi.Message) error {
 //}
 
 func (b *Bot) handleMessage(message *tgbotapi.Message) error {
-	log.Println(strconv.Itoa(int(message.Chat.ID)) + ":" + message.Text)
+	log.Println(strconv.Itoa(int(message.Chat.ID)) +
+		":" + message.Text)
 	return nil
 }
