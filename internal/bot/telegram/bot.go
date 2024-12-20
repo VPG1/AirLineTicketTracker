@@ -2,17 +2,17 @@ package telegram
 
 import (
 	"AirLineTicketTracker/config"
-	"AirLineTicketTracker/internal/services"
+	"AirLineTicketTracker/internal/services/tracking_service"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type Bot struct {
 	tgBotApi        *tgbotapi.BotAPI
-	trackingService *services.TrackingService
+	trackingService *tracking_service.TrackingService
 }
 
-func New(config *config.Config, trackingService *services.TrackingService) (*Bot, error) {
+func New(config *config.Config, trackingService *tracking_service.TrackingService) (*Bot, error) {
 	bot := &Bot{}
 
 	var err error
