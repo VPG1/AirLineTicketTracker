@@ -1,4 +1,4 @@
-package in_memory_storage
+package postgres
 
 import "errors"
 
