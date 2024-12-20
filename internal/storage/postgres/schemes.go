@@ -22,8 +22,8 @@ type FlightsSchema struct {
 	UserId          string    `db:"user_id"`
 }
 
-func (f *FlightsSchema) ToFlight() entities.Flight {
-	return entities.Flight{OriginIATA: f.OriginIATA, Origin: f.Origin,
+func (f *FlightsSchema) ToFlight() *entities.Flight {
+	return &entities.Flight{OriginIATA: f.OriginIATA, Origin: f.Origin,
 		DestinationIATA: f.DestinationIATA, Destination: f.Destination,
 		Price: f.Price, DepartureAt: f.DepartureAt}
 }

@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"AirLineTicketTracker/internal/services"
+	"AirLineTicketTracker/internal/services/tracking_service"
 	"errors"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -65,14 +65,14 @@ func (b *Bot) handleTrackCommand(message *tgbotapi.Message) error {
 	text = strings.TrimPrefix(text, "/track") // удаляем префикс сообщения
 
 	flight, err := b.trackingService.TrackFlight(message.Chat.ID, text)
-	if errors.Is(err, services.IncorrectSearchPhrase) { // некорректная поисковая фраза
+	if errors.Is(err, tracking_service.IncorrectSearchPhrase) { // некорректная поисковая фраза
 		msg := tgbotapi.NewMessage(message.Chat.ID, incorrectSearchPhraseResponse)
 		_, err = b.tgBotApi.Send(msg)
 		if err != nil {
 			return err
 		}
 		return nil
-	} else if errors.Is(err, services.UserNotRegistered) { // пользователь не вводил команду старт
+	} else if errors.Is(err, tracking_service.UserNotRegistered) { // пользователь не вводил команду старт
 		msg := tgbotapi.NewMessage(message.Chat.ID, userNotInSystem)
 
 		_, err = b.tgBotApi.Send(msg)
@@ -81,7 +81,7 @@ func (b *Bot) handleTrackCommand(message *tgbotapi.Message) error {
 		}
 
 		return nil
-	} else if errors.Is(err, services.FlightAlreadyTracked) {
+	} else if errors.Is(err, tracking_service.FlightAlreadyTracked) {
 		formatedDate := flight.DepartureAt.Format("January 2, 2006 15:04 Monday")
 
 		msg := tgbotapi.NewMessage(message.Chat.ID,

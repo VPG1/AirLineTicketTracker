@@ -1,4 +1,4 @@
-package services
+package tracking_service
 
 import "errors"
 
