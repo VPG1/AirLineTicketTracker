@@ -1,18 +1,30 @@
 package aviasales_client
 
-import "time"
-
-type Flight struct {
-	Airline      string    `json:"airline"`
-	DepartureAt  time.Time `json:"departure_at"`
-	ReturnAt     time.Time `json:"return_at"`
-	ExpiresAt    time.Time `json:"expires_at"`
-	Price        int       `json:"price"`
-	FlightNumber int       `json:"flight_number"`
-}
+import (
+	"AirLineTicketTracker/internal/entities"
+	"time"
+)
 
 type Response struct {
-	Data     map[string]map[string]Flight `json:"data"`
-	Currency string                       `json:"currency"`
-	Success  bool                         `json:"success"`
+	Data []struct {
+		DepartDate       time.Time `json:"depart_date"`
+		Origin           string    `json:"origin"`
+		Destination      string    `json:"destination"`
+		Gate             string    `json:"gate"`
+		FoundAt          time.Time `json:"found_at"`
+		TripClass        int       `json:"trip_class"`
+		Value            int       `json:"value"`
+		NumberOfChanges  int       `json:"number_of_changes"`
+		Duration         int       `json:"duration"`
+		Distance         int       `json:"distance"`
+		ShowToAffiliates bool      `json:"show_to_affiliates"`
+		Actual           bool      `json:"actual"`
+	} `json:"data"`
+	Currency string `json:"currency"`
+	Success  bool   `json:"success"`
+}
+
+func MapRespToFlight(resp *Response, flight *entities.Flight) {
+	flight.Price = resp.Data[0].Value
+	flight.DepartureAt = resp.Data[0].DepartDate
 }

@@ -1,6 +1,7 @@
 package aviasales_client
 
 import (
+	"AirLineTicketTracker/internal/entities"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,27 +12,34 @@ import (
 type Client struct {
 	token  string
 	host   string
+	path   string
 	client http.Client
 }
 
-func New(host string, token string) *Client {
+func New(host string, path string, token string) *Client {
 	return &Client{
 		token:  token,
 		host:   host,
+		path:   path,
 		client: http.Client{},
 	}
 }
 
-func (c *Client) GetFlightInfo(origin string, destination string) (*Response, error) {
+func (c *Client) GetFlightInfo(flight entities.Flight) (*entities.Flight, error) {
 	u := url.URL{
 		Scheme: "https",
 		Host:   c.host,
-		Path:   "v1/prices/cheap",
+		Path:   c.path,
 	}
 
 	q := url.Values{}
-	q.Add("origin", origin)
-	q.Add("destination", destination)
+	q.Add("origin", flight.OriginIATA)
+	q.Add("destination", flight.DestinationIATA)
+	q.Add("currency", "usd")
+	q.Add("period_type", "year")
+	q.Add("page", "1")
+	q.Add("limit", "1")
+	q.Add("sorting", "price")
 	q.Add("token", c.token)
 
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -56,6 +64,8 @@ func (c *Client) GetFlightInfo(origin string, destination string) (*Response, er
 	if responseBody.Success == false {
 		return nil, FlightNotFound
 	}
-	
-	return responseBody, nil
+
+	MapRespToFlight(responseBody, &flight)
+	newFlight := flight
+	return &newFlight, nil
 }

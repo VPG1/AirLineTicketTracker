@@ -1,9 +1,11 @@
 package iata_code_definition_api
 
 import (
+	"AirLineTicketTracker/internal/entities"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -20,7 +22,7 @@ func New(host string) *Client {
 	}
 }
 
-func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
+func (c Client) GetIATACodes(searchPhrase string) (*entities.Flight, error) {
 	u := url.URL{
 		Scheme: "https",
 		Host:   c.host,
@@ -32,6 +34,7 @@ func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
+		log.Println("NewRequest: ", err)
 		return nil, err
 	}
 
@@ -39,6 +42,7 @@ func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
 
 	resp, err := c.client.Do(req)
 	if err != nil {
+		log.Println("Client.Do: ", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -53,5 +57,5 @@ func (c Client) GetIATACodes(searchPhrase string) (*Response, error) {
 		return nil, IncorrectResponse
 	}
 
-	return responseBody, nil
+	return getFlightFromResp(responseBody), nil
 }
