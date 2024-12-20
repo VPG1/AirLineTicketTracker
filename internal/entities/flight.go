@@ -1,8 +1,12 @@
 package entities
 
+import "time"
+
 type Flight struct {
-	Currency    string
-	Origin      string
-	Destination string
-	Price       float64
+	OriginIATA      string
+	Origin          string
+	DestinationIATA string
+	Destination     string
+	Price           int
+	DepartureAt     time.Time
 }
