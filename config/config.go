@@ -23,8 +23,9 @@ type Config struct {
 	} `yaml:"database"`
 
 	FlightsAPI struct {
-		Token   string `yaml:"token" env-required:"true"` // TODO: move to environment variables
-		BaseURL string `yaml:"base_url" env-required:"true"`
+		Token string `yaml:"token" env-required:"true"` // TODO: move to environment variables
+		Host  string `yaml:"host" env-required:"true"`
+		Path  string `yaml:"path" env-required:"true"`
 	} `yaml:"flights_api"`
 
 	Notification struct {
