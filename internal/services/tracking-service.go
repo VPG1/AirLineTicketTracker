@@ -21,18 +21,21 @@ type FlightInfoService interface {
 	GetFlightInfo(flight entities.Flight) (*entities.Flight, error)
 }
 
-//type FlightNotificatorService interface {
-//	TrackFlight(chatId int64, flightId int64, flight *entities.Flight) error
-//}
-
-type TrackingService struct {
-	storage       Storage
-	convService   IATAConverterService
-	FlightService FlightInfoService
+type FlightNotificatorService interface {
+	TrackFlight(chatId int64, flight *entities.Flight) error
+	UntrackFlight(chatId int64, flight *entities.Flight) error
 }
 
-func NewTrackingService(storage Storage, convService IATAConverterService, flightService FlightInfoService) *TrackingService {
-	return &TrackingService{storage, convService, flightService}
+type TrackingService struct {
+	storage             Storage
+	convService         IATAConverterService
+	FlightService       FlightInfoService
+	notificationService FlightNotificatorService
+}
+
+func NewTrackingService(storage Storage, convService IATAConverterService,
+	flightService FlightInfoService, notificationService FlightNotificatorService) *TrackingService {
+	return &TrackingService{storage, convService, flightService, notificationService}
 }
 
 func (s *TrackingService) AddUser(username string, chatId int64) error {
@@ -79,5 +82,6 @@ func (s *TrackingService) GetUserFlight(chatId int64) []entities.Flight {
 	} else if err != nil {
 		return nil
 	}
+
 	return res
 }
